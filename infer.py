@@ -1,31 +1,6 @@
 from infer_helper import *
-import json
-import sys
 from scipy.optimize import linear_sum_assignment
 
-def make_print_to_file(fileName, path='./'):
-    import sys
-    import os
-    import sys
-    import datetime
-
-    class Logger(object):
-        def __init__(self, filename="Default.log", path="./"):
-            self.terminal = sys.stdout
-            self.log = open(os.path.join(path, filename), "a", encoding='utf8', )
-
-        def write(self, message):
-            self.terminal.write(message)
-            self.log.write(message)
-
-        def flush(self):
-            pass
-
-    sys.stdout = Logger(fileName + '.log', path=path)
-    print(fileName.center(60, '*'))
-
-# import os
-# os.environ['CUDA_VISIBLE_DEVICES']='0'
 import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -33,17 +8,16 @@ if __name__ == '__main__':
 
     parser.add_argument("--encoder", type=str, default="gcn", help="the type of encoder")
     parser.add_argument("--features", type=str, default="stru", help="usage of features") # stru name struname
-    parser.add_argument("--data_dir", type=str, default="data/zh_en", required=False, help="input dataset file directory")  # 1hop zh_en
+    parser.add_argument("--data_dir", type=str, default="ja_en", required=False, help="input dataset file directory")  # 1hop zh_en
     parser.add_argument("--first_time", default='True', action='store_true', help='firsttime runing?')
 
-    parser.add_argument("--scoreop", type=str, default="direct",help="score optimization strategy")  # csls sinkhorn recip direct
+    parser.add_argument("--sim", type=str, default="cosine",help="similarity metric")  # cosine euclidean manhattan
+    parser.add_argument("--scoreop", type=str, default="none",help="score optimization strategy")  # csls sinkhorn rinf none
     parser.add_argument("--match", type=str, default="rl", help="inference strategy") # hun sm rl greedy
 
     parser.add_argument("--multik", type=int, default=5, help="topk process of csls and recip")
     parser.add_argument("--sinkhornIte", type=int, default=100, help="iteration of sinkhorn")
-
     args = parser.parse_args()
-    make_print_to_file(args.data_dir.split('/')[-1]+'_'+args.features, path='./logs/')
     print(args)
 
     args.first_time = True
@@ -62,10 +36,22 @@ if __name__ == '__main__':
     else:
         e, KG1, KG2, train, test, test_lefts, test_rights, l2r, r2l, vali = prepare_input(e1,e2,ref,sup,kg1,kg2,val)
 
+    # choices of the representation learning model
     if args.encoder == "rrea":
         if args.first_time:
             se_vec = np.load('./data/' + language + '/vec-new.npy')
-            aep = getsim_matrix_cosine_sep(se_vec, test_lefts, test_rights)
+            # choices of the similarity matrix!!!
+            if args.sim == "cosine":
+                if args.data_dir in ["dbp_wd_100", "dbp_yg_100"]:
+                    aep = getsim_matrix_large(se_vec, test_lefts, test_rights)
+                else:
+                    aep = getsim_matrix_cosine_sep(se_vec, test_lefts, test_rights)
+            elif args.sim == "euclidean":
+                aep = getsim_matrix(se_vec, test_lefts, test_rights, "euclidean")
+            elif args.sim == "manhattan":
+                aep = getsim_matrix(se_vec, test_lefts, test_rights, "cityblock")
+            else:
+                print("FAlSE!!!")
             del se_vec
             np.save('./data/' + language + '/stru_mat_rrea.npy', aep)
         else:
@@ -73,49 +59,62 @@ if __name__ == '__main__':
     elif args.encoder == "gcn":
         if args.first_time:
             se_vec = np.load('./data/' + language + '/vec.npy')
-            aep = getsim_matrix_cosine_sep(se_vec, test_lefts, test_rights)
+            # choices of the similarity matrix!!!
+            if args.sim == "cosine":
+                if args.data_dir in ["dbp_wd_100", "dbp_yg_100"]:
+                    aep = getsim_matrix_large(se_vec, test_lefts, test_rights)
+                else:
+                    aep = getsim_matrix_cosine_sep(se_vec, test_lefts, test_rights)
+            elif args.sim == "euclidean":
+                aep = getsim_matrix(se_vec, test_lefts, test_rights, "euclidean")
+            elif args.sim == "manhattan":
+                aep = getsim_matrix(se_vec, test_lefts, test_rights, "cityblock")
+            else:
+                print("FAlSE!!!")
             del se_vec
             np.save('./data/' + language + '/stru_mat_gcn.npy', aep)
         else:
             aep = np.load('./data/' + language + '/stru_mat_gcn.npy')
+    else:
+        print("FAlSE!!!")
 
+    # choices of the input features
     if args.features == 'stru':
         aep_fuse = aep
         del aep
-    elif args.features == 'name':
-        del aep
+    elif args.features == 'name' or args.features == 'struname':
         if args.first_time:
             nepath = './data/' + language + '/name_trans_vec_ftext.txt'
             ne_vec = loadNe(nepath)
-            aep_n = getsim_matrix_cosine_sep(ne_vec, test_lefts, test_rights)
+            if args.sim == "cosine":
+                aep_n = getsim_matrix_cosine_sep(ne_vec, test_lefts, test_rights)
+            elif args.sim == "euclidean":
+                aep_n = getsim_matrix(ne_vec, test_lefts, test_rights, "euclidean")
+            elif args.sim == "manhattan":
+                aep_n = getsim_matrix(ne_vec, test_lefts, test_rights, "cityblock")
+            else:
+                print("FAlSE!!!")
             np.save('./data/' + language + '/name_mat.npy', aep_n)
         else:
             aep_n = np.load('./data/' + language + '/name_mat.npy')
-        aep_fuse = aep_n
-        del aep_n
-    elif args.features == 'struname':
-        @profile
-        def fusion(a, b):
-            c = 0.5*a + 0.5*b
-            return c
-        # load other features
-        if args.first_time:
-            nepath = './data/' + language + '/name_trans_vec_ftext.txt'
-            ne_vec = loadNe(nepath)
-            aep_n = getsim_matrix_cosine_sep(ne_vec, test_lefts, test_rights)
-            np.save('./data/' + language + '/name_mat.npy', aep_n)
+
+        if args.features == 'name':
+            del aep
+            aep_fuse = aep_n
+            del aep_n
         else:
-            aep_n = np.load('./data/' + language + '/name_mat.npy')
-        aep_fuse = fusion(aep_n, aep)
-        del aep_n
-        del aep
-    # aep_fuse is the distance matrix
-    aep_fuse = 1-aep_fuse
-    # align_type = args.infer
-    # sim = 1 - aep_fuse  # this is the similarity matrix!!!
-    # print("start to infer: {:.4f} s".format(time.time() - t))
+            def fusion(a, b):
+                c = 0.5 * a + 0.5 * b
+                return c
+            aep_fuse = fusion(aep_n, aep)
+            del aep_n
+            del aep
+    else:
+        print("FAlSE!!!")
+
+
+    aep_fuse = 1-aep_fuse # convert to similarity matrix
     t = time.time()
-    # print("direct time elapsed: {:.4f} s".format(time.time() - t))
     if args.scoreop == "csls":
         # after this, still the similarity matrix
         if args.mode == "mul":
@@ -123,7 +122,7 @@ if __name__ == '__main__':
         else:
             aep_fuse = csls_sim(aep_fuse, 1)
         print("finish create CSLS matrix: {:.4f} s".format(time.time() - t))
-    elif args.scoreop == "recip":
+    elif args.scoreop == "rinf":
         # the lower the better, dis!!!
         if args.mode == "mul":
             aep_fuse = 1- recip_mul(aep_fuse, args.multik, t)
@@ -136,7 +135,7 @@ if __name__ == '__main__':
             print(aep_fuse)
         else:
             # input to sinkhorn is a distance matrix
-            aep_fuse = matrix_sinkhorn(torch.tensor(1-aep_fuse, device="cpu"),5).cpu().detach().numpy() #cuda
+            aep_fuse = matrix_sinkhorn(torch.tensor(1-aep_fuse, device="cpu"),100).cpu().detach().numpy() #cuda
             # output of sinkhorn is a similarity matrix
             print(aep_fuse)
     else:
@@ -147,39 +146,30 @@ if __name__ == '__main__':
     if args.match == "greedy":
         if args.mode == "mul":
             mul_max(1-aep_fuse, test_lefts, test_rights, test)
-            # mul_thresholded_confi(aep_fuse, test_lefts, test_rights, test)
         elif args.mode == "unm":
             eva_unm(aep_fuse)
             eva_unm_tbnns(aep_fuse)
         else:
             eva(aep_fuse)
     elif args.match == "hun":
+        if args.mode == "unm":
+            aep_fuse = np.pad(aep_fuse, [(0, 0), (0, aep_fuse.shape[0] - aep_fuse.shape[1])], mode='constant')
+            assert aep_fuse.shape[0] == aep_fuse.shape[1]
+        cost = 1 - aep_fuse
+        del aep_fuse
+        ent_num = len(cost)
+        row_ind, col_ind = linear_sum_assignment(cost)
+        trueC = 0
         if args.mode == "mul":
-            cost = 1 - aep_fuse
-            ent_num = len(cost)
-            from scipy.optimize import linear_sum_assignment
-            row_ind, col_ind = linear_sum_assignment(cost)
-            trueC = 0
             for i in range(len(row_ind)):
                 if (test_lefts[row_ind[i]], test_rights[col_ind[i]]) in test:
                     trueC += 1
             print(trueC)
-            precision = trueC * 1.0 / len(aep_fuse)
+            precision = trueC * 1.0 / ent_num
             recall = trueC * 1.0 / len(test)
             f1 = 2 / (1 / precision + 1 / recall)
             print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
         elif args.mode == "unm":
-            sim = np.pad(aep_fuse, [(0, 0), (0, aep_fuse.shape[0] - aep_fuse.shape[1])], mode='constant')
-            print(sim)
-            print(sim.shape)
-            assert sim.shape[0] == sim.shape[1]
-            scale = sim.shape[0]
-            cost = 1 - sim
-            ent_num = len(cost)
-            from scipy.optimize import linear_sum_assignment
-            row_ind, col_ind = linear_sum_assignment(cost)
-            print(" Finish ! : {:.4f} s".format(time.time() - t))
-            trueC = 0
             for i in range(len(row_ind)):
                 if row_ind[i]< 10500:
                     if row_ind[i] == col_ind[i]:
@@ -191,48 +181,45 @@ if __name__ == '__main__':
             print(trueC)
             print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
         else:
-            # @profile
-            def ass(cost):
-                row_ind, col_ind = linear_sum_assignment(cost)
-                return row_ind, col_ind
-            # del aep_fuse
-            cost = 1 - aep_fuse
-            del aep_fuse
-            ent_num = len(cost)
-            row_ind, col_ind = ass(cost)
-            del cost
-            trueC = 0
             for i in range(len(row_ind)):
                 if row_ind[i] == col_ind[i]:
                     trueC += 1
             print("Acc: " + str(trueC) + ' / ' + str(ent_num) + ' = ' + str(trueC * 1.0 / ent_num))
-
     elif args.match == "sm":
-        if args.mode == "mul":
-            gapp = 105000
-            scale = aep_fuse.shape[0]
-            scale_1 = aep_fuse.shape[1]
-            # store preferences
-            MALE_PREFS = {}
-            FEMALE_PREFS = {}
-            pref = np.argsort(-aep_fuse, axis=1)
-            pref_col = np.argsort(-aep_fuse, axis=0)
-            print("Generate the preference scores time elapsed: {:.4f} s".format(time.time() - t))
+        if args.mode == "unm":
+            aep_fuse = np.pad(aep_fuse, [(0, 0), (0, aep_fuse.shape[0] - aep_fuse.shape[1])], mode='constant')
+            assert aep_fuse.shape[0] == aep_fuse.shape[1]
+        gapp = 105000
+        scale = aep_fuse.shape[0]
+        scale_1 = aep_fuse.shape[1]
+        MALE_PREFS = {}
+        FEMALE_PREFS = {}
+        def get_pref(sim, dim=1):
+            pref = np.argsort(sim, axis=dim)
+            return pref
+        pref = get_pref(-aep_fuse)
+        pref_col = get_pref(-aep_fuse, dim=0)
+        del aep_fuse
+        print("Generate the preference scores time elapsed: {:.4f} s".format(time.time() - t))
+        def getmale(pref):
             for i in range(scale):
                 lis = (pref[i] + gapp).tolist()
                 MALE_PREFS[i] = lis
-            print("Forming the preference scores time 1 elapsed: {:.4f} s".format(time.time() - t))
-            for i in range(scale_1):
-                FEMALE_PREFS[i + gapp] = pref_col[:, i].tolist()
-            print("Forming the preference scores time 2 elapsed: {:.4f} s".format(time.time() - t))
-            matches = gale_shapley(set(range(scale)), MALE_PREFS, FEMALE_PREFS)
-            # matches = deferred_acceptance(MALE_PREFS, FEMALE_PREFS)
-            print("Deferred acceptance time elapsed: {:.4f} s".format(time.time() - t))
-            # print(matches)
-            trueC = 0
-            # for match in matches:
-            #     if (test_lefts[match], test_rights[matches[match] - gapp]) in test:
-            #         trueC += 1
+            return MALE_PREFS
+        MALE_PREFS = getmale(pref)
+        del pref
+        print("Forming the preference scores time 1 elapsed: {:.4f} s".format(time.time() - t))
+        for i in range(scale_1):
+            FEMALE_PREFS[i + gapp] = pref_col[:, i].tolist()
+        del pref_col
+        print("Forming the preference scores time 2 elapsed: {:.4f} s".format(time.time() - t))
+        matches = gale_shapley(set(range(scale)), MALE_PREFS, FEMALE_PREFS)
+        del MALE_PREFS
+        del FEMALE_PREFS
+        print("Deferred acceptance time elapsed: {:.4f} s".format(time.time() - t))
+
+        trueC = 0
+        if args.mode == "mul":
             for match in matches:
                 if (test_lefts[int(match[0])], test_rights[int(match[1]) - gapp]) in test:
                     trueC += 1
@@ -243,101 +230,31 @@ if __name__ == '__main__':
             recall = trueC * 1.0 / len(test)
             f1 = 2 / (1 / precision + 1 / recall)
             print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
-        elif args.mode == "unm":
-            gapp = 100000
-            # pad the similarity matrix to add the dunmmy nodes...
-            sim = np.pad(aep_fuse, [(0,0), (0, aep_fuse.shape[0] - aep_fuse.shape[1])], mode='constant')
-            print(sim)
-            print(sim.shape)
-            assert sim.shape[0] == sim.shape[1]
-            scale = sim.shape[0]
-            MALE_PREFS = {}
-            FEMALE_PREFS = {}
-            def get_pref(sim, dim=1):
-                pref = np.argsort(sim, axis=dim)
-                return pref
-            pref = get_pref(-sim)
-            pref_col = get_pref(-sim, dim=0)
-            del sim
-            print("Generate the preference scores time elapsed: {:.4f} s".format(time.time() - t))
-            def getmale(pref):
-                for i in range(scale):
-                    lis = (pref[i] + gapp).tolist()
-                    MALE_PREFS[i] = lis
-                return MALE_PREFS
-            MALE_PREFS = getmale(pref)
-            del pref
-            print("Forming the preference scores time 1 elapsed: {:.4f} s".format(time.time() - t))
-            for i in range(scale):
-                FEMALE_PREFS[i + gapp] = pref_col[:, i].tolist()
-            del pref_col
-            print("Forming the preference scores time 2 elapsed: {:.4f} s".format(time.time() - t))
-
-            matches = gale_shapley(set(range(scale)), MALE_PREFS, FEMALE_PREFS)
-            print("Deferred acceptance time elapsed: {:.4f} s".format(time.time() - t))
-            trueC = 0
-            for match in matches:
-                if int(match[0]) + gapp == int(match[1]):
-                    trueC += 1
-            print(trueC)
-            precision = trueC * 1.0 / 10500
-            recall = trueC * 1.0 / 10500
-            f1 = 2 / (1 / precision + 1 / recall)
-            print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
         else:
-            gapp = 105000
-            scale = aep_fuse.shape[0]
-            scale_1 = aep_fuse.shape[1]
-            MALE_PREFS = {}
-            FEMALE_PREFS = {}
-            def get_pref(sim, dim=1):
-                pref = np.argsort(sim, axis=dim)
-                return pref
-            pref = get_pref(-aep_fuse)
-            pref_col = get_pref(-aep_fuse, dim=0)
-            del aep_fuse
-            print("Generate the preference scores time elapsed: {:.4f} s".format(time.time() - t))
-
-            def getmale(pref):
-                for i in range(scale):
-                    lis = (pref[i] + gapp).tolist()
-                    MALE_PREFS[i] = lis
-                return MALE_PREFS
-            MALE_PREFS = getmale(pref)
-
-            del pref
-            print("Forming the preference scores time 1 elapsed: {:.4f} s".format(time.time() - t))
-            for i in range(scale_1):
-                FEMALE_PREFS[i + gapp] = pref_col[:, i].tolist()
-            del pref_col
-            print("Forming the preference scores time 2 elapsed: {:.4f} s".format(time.time() - t))
-
-            matches = gale_shapley(set(range(scale)), MALE_PREFS, FEMALE_PREFS)
-            del MALE_PREFS
-            del FEMALE_PREFS
-            print("Deferred acceptance time elapsed: {:.4f} s".format(time.time() - t))
-
-            trueC = 0
             for match in matches:
                 if int(match[0]) + gapp == int(match[1]):
                     trueC += 1
-            precision = trueC * 1.0 / len(matches)
+            if args.mode == "unm":
+                precision = trueC * 1.0 / len(matches)
+            else:
+                precision = trueC * 1.0 / 10500
             recall = trueC * 1.0 / 10500
             f1 = 2 / (1 / precision + 1 / recall)
             print(len(matches))
             print(trueC)
             print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
-
     elif args.match == "rl":
-        nelinenum = 10500
-        # how to process this using r
-        dic_row = {i: i for i in range(len(test))}
-        dic_col = {i: i for i in range(len(test))}
-        # determine the results iteratively...
+        if args.mode == "mul" or args.mode == "unm":
+            dic_row = {i: test_lefts[i] for i in range(len(test_lefts))}  # test_lefts
+            dic_col = {i: test_rights[i] for i in range(len(test_rights))}  # test_rights
+        else:
+            dic_row = {i: i for i in range(len(test))}
+            dic_col = {i: i for i in range(len(test))}
+
         total_matched = 0
         total_true = 0
-        aep_fuse_new = copy.deepcopy(1-aep_fuse)
-        aep_fuse_r_new = copy.deepcopy((1-aep_fuse).T)
+        aep_fuse_new = copy.deepcopy(1 - aep_fuse)
+        aep_fuse_r_new = copy.deepcopy((1 - aep_fuse).T)
         del aep_fuse
         matchedpairs = {}
         for _ in range(2):
@@ -346,26 +263,41 @@ if __name__ == '__main__':
             total_matched += matched
             total_true += matched_true
             if matched == 0: break
-        # print(float(total_true)/10500)
+
         print('Total Match ' + str(total_matched))
         print('Total Match True ' + str(total_true))
         print("End of pre-treatment...\n")
+
         new2old_row, new2old_col = dic_row, dic_col
         del dic_row
         del dic_col
         aep_fuse_new = 1 - aep_fuse_new
         leftids, rightids, newindex, cans, scores = evarerank(aep_fuse_new, new2old_row, new2old_col)
+
         leftids = np.array(leftids)
         rightids = np.array(rightids)
-        # figure this out tomorrow
-        M1 = np.zeros((len(test), len(test)))
-        M2 = np.zeros((len(test), len(test)))
-        for item in KG1:
-            if item[0] < len(test) and item[2] < len(test):
-                M1[item[0], item[2]] = 1
-        for item in KG2:
-            if item[0] - nelinenum < len(test) and item[2] - nelinenum < len(test):
-                M2[item[0] - nelinenum, item[2] - nelinenum] = 1
+
+        if args.mode == "mul" or args.mode == "unm":
+            M1 = np.zeros((len(test_lefts), len(test_lefts)))
+            M2 = np.zeros((len(test_rights), len(test_rights)))
+            Real2mindex_row = {test_lefts[i]: i for i in range(len(test_lefts))}  # test_lefts
+            Real2mindex_col = {test_rights[i]: i for i in range(len(test_rights))}  # test_rights
+            for item in KG1:
+                if item[0] in test_lefts and item[2] in test_lefts:
+                    M1[Real2mindex_row[item[0]], Real2mindex_row[item[2]]] = 1
+            for item in KG2:
+                if item[0] in test_rights and item[2] in test_rights:
+                    M2[Real2mindex_col[item[0]], Real2mindex_col[item[2]]] = 1
+        else:
+            nelinenum = 10500
+            M1 = np.zeros((len(test), len(test)))
+            M2 = np.zeros((len(test), len(test)))
+            for item in KG1:
+                if item[0] < len(test) and item[2] < len(test):
+                    M1[item[0], item[2]] = 1
+            for item in KG2:
+                if item[0] - nelinenum < len(test) and item[2] - nelinenum < len(test):
+                    M2[item[0] - nelinenum, item[2] - nelinenum] = 1
         ### RL
         norm = 1
         OUTPUT_GRAPH = False
@@ -394,14 +326,25 @@ if __name__ == '__main__':
             trueacts = []
             ids = []
             idl2r = matchedpairs
-            adj = np.where(M1[leftids[newindex[0]]] == 1)[0]
+            if args.mode == "mul" or args.mode == "unm":
+                adj = np.where(M1[Real2mindex_row[leftids[newindex[0]]]] == 1)[0]
+            else:
+                adj = np.where(M1[leftids[newindex[0]]] == 1)[0]
             if len(adj) > 0:
                 rids = []
                 for id in adj:
                     if id in idl2r:
-                        rids.append(idl2r[id])
-                # radj = np.argwhere(rightids == rids)
-                Ms = M2[rightids[cans[0]]]
+                        if args.mode == "mul" or args.mode == "unm":
+                            rids.append(Real2mindex_col[idl2r[id]])  # !!!!!!!!!!!!!!!!!!!!!!!!
+                        else:
+                            rids.append(idl2r[id])
+                if args.mode == "mul" or args.mode == "unm":
+                    inds = []
+                    for item in cans[0]:
+                        inds.append(Real2mindex_col[rightids[item]])
+                    Ms = M2[inds]
+                else:
+                    Ms = M2[rightids[cans[0]]]
                 Ms = Ms[:, rids]
                 cohScore = np.sum(Ms, axis=-1).squeeze() / norm
             else:
@@ -421,14 +364,25 @@ if __name__ == '__main__':
                 if i == len(leftids) - 1: break
                 golScore_ = golScoreWhole[cans[i + 1]]
                 locScore_ = scores[i + 1]
-                adj = np.where(M1[leftids[newindex[i + 1]]] == 1)[0]
+                if args.mode == "mul" or args.mode == "unm":
+                    adj = np.where(M1[Real2mindex_row[leftids[newindex[i + 1]]]] == 1)[0]
+                else:
+                    adj = np.where(M1[leftids[newindex[i + 1]]] == 1)[0]
                 if len(adj) > 0:
                     rids = []
                     for id in adj:
                         if id in idl2r:
-                            rids.append(idl2r[id])
-                    # radj = np.argwhere(rightids == rids)
-                    Ms = M2[rightids[cans[i + 1]]]
+                            if args.mode == "mul" or args.mode == "unm":
+                                rids.append(Real2mindex_col[idl2r[id]])  ####!!!
+                            else:
+                                rids.append(idl2r[id])
+                    if args.mode == "mul" or args.mode == "unm":
+                        inds = []
+                        for item in cans[i + 1]:
+                            inds.append(Real2mindex_col[rightids[item]])
+                        Ms = M2[inds]
+                    else:
+                        Ms = M2[rightids[cans[i + 1]]]
                     Ms = Ms[:, rids]
                     cohScore_ = np.sum(Ms, axis=-1).squeeze() / norm
                 else:
@@ -440,22 +394,27 @@ if __name__ == '__main__':
                 locScore = locScore_
                 cohScore = cohScore_
                 observation = observation_
-            # print(len(trueacts))
-            truth = np.where(rightids[trueacts] == leftids[newindex[ids].tolist()])
-            # print(len(truth[0]))
-            RECORD.append(len(truth[0]))
-            if len(truth[0]) > highest:
-                highest = len(truth[0])
-            # print('highest ' + str(highest))
-            # print()
-            fig_accuracy[i_episode] = len(truth[0])
-            # if (i_episode + 1) % epoch == 0:
-            print("time elapsed: {:.4f} s".format(time.time() - t))
-            # np.save('./data/' + Config.language + '/RLresults' + fillup + '-' + method + '.npy',
-            #         np.array(rightids[trueacts]))
-        # IMPORTANT!!! WRITE FILES
-        RECORD = np.array(RECORD)
-        # np.save('./data/' + Config.language + '/' + directiory  + '/corrects' + str(args.round) + '.npy', RECORD)
-        print('Averaged correct matches: ' + str(np.average(RECORD[-20:])))
 
+            if args.mode == "mul" or args.mode == "unm":
+                truth = 0
+                for i in range(len(ids)):
+                    l = leftids[newindex[ids[i]]]
+                    r = rightids[trueacts[i]]
+                    if (l, r) in test:
+                        truth += 1
+                print(truth)
+                RECORD.append(truth)
+                if truth > highest:
+                    highest = truth
+                fig_accuracy[i_episode] = truth
+            else:
+                truth = np.where(rightids[trueacts] == leftids[newindex[ids].tolist()])
+                RECORD.append(len(truth[0]))
+                if len(truth[0]) > highest:
+                    highest = len(truth[0])
+                fig_accuracy[i_episode] = len(truth[0])
+            print("time elapsed: {:.4f} s".format(time.time() - t))
+
+        RECORD = np.array(RECORD)
+        print('Averaged correct matches: ' + str(np.average(RECORD[-20:])))
     print("total time elapsed: {:.4f} s".format(time.time() - t))

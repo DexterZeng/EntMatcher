@@ -38,7 +38,7 @@ def CSLS_test(thread_number=16, csls=10, accurate=True):
     Lvec = Lvec / np.linalg.norm(Lvec, axis=-1, keepdims=True)
     Rvec = Rvec / np.linalg.norm(Rvec, axis=-1, keepdims=True)
     eval_alignment_by_sim_mat(Lvec, Rvec, [1, 5, 10], thread_number, csls=csls, accurate=accurate)
-    np.save('../' + args.data_dir + 'vec-new.npy', vec)
+    np.save('../data/' + args.data_dir + '/vec-new.npy', vec)
     return None
 
 def get_train_set(batch_size):
@@ -103,12 +103,12 @@ def get_trgat(node_size, rel_size, node_hidden, rel_hidden, triple_size, n_attn_
 import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", type=str, default="data/zh_en/", required=False, help="input dataset file directory") #  en_fr_15k_V1 1hop dbp_wd_100
+    parser.add_argument("--data_dir", type=str, default="zh_en", required=False, help="input dataset file directory") #  en_fr_15k_V1 1hop dbp_wd_100
     args = parser.parse_args()
     print(args)
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    # os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     config = tf.ConfigProto()
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     sess = tf.Session(config=config)
 
     lang = args.data_dir
-    train_pair, dev_pair, adj_matrix, r_index, r_val, adj_features, rel_features = load_data('../%s/' % lang)
+    train_pair, dev_pair, adj_matrix, r_index, r_val, adj_features, rel_features = load_data('../data/%s/' % lang)
     adj_matrix = np.stack(adj_matrix.nonzero(), axis=1)  # convert the sparse matrix to the connection matrix
     rel_matrix, rel_val = np.stack(rel_features.nonzero(),
                                    axis=1), rel_features.data  # convert the sparse matrix to the connection matrix with rel values..

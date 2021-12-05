@@ -12,7 +12,7 @@ np.random.seed(seed)
 import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", type=str, default="mul", required=False, help="input dataset file directory")  # zh_en mul 1hop # en_fr_15k_V1
+    parser.add_argument("--data_dir", type=str, default="en_fr_15k_V1", required=False, help="input dataset file directory")  # zh_en mul 1hop # en_fr_15k_V1
     args = parser.parse_args()
     print(args)
     language = args.data_dir
