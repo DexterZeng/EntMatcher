@@ -42,16 +42,28 @@ The data_dir could be chosen from the directories of these datasets. Or you can 
 ```
 bash stru.sh
 ```
-As for the auxiliary Information
-Regarding the Semantic Information, we obtain the entity name embeddings from EAE, which can also be found here. 
-* Then run 
+As for the auxiliary information, we obtain the entity name embeddings from EAE, which can also be found here. 
+### 2. Matching KGs in entity embedding spaces
 ```
 cd ..
-python infer.py --lan "fr_en"
+python infer.py
 ```
-* You may also directly run
+Main configurations:
+* Similarity metric ```--sim``` can be chosen from ```cosine, euclidean, manhattan```;
+* Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
+* Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
+
+Other configurations:
+```--mode``` can be chosen from ```1-to-1, mul, unm```; ```--encoder``` can be chosen from ```gcn, rrea```; ```--features``` can be chosen from ```stru, name, struname```; ```--data_dir``` can be chosen from the dataset directories.
+
+### 3. Reproducing the results
+You may also directly run the scripts to reproduce the main performance of the compared algorithms. For instance:
 ```
-bash auto.sh
+bash DInf.sh 
+```
+The results on the DWY 100K dataset can be obtained by running:
+```
+bash Large.sh 
 ```
 > Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit  when running code repeatedly.
 
