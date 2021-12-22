@@ -1,5 +1,26 @@
 # EntMatcher
 
+## Contents
+1. [Overview](#overview)
+2. [Dependencies](#dependencies)
+3. [Datasets](#datasets)
+4. [Running](#running)
+
+## Overview
+
+
+```
+data/: datasets
+models/: generating the input unified entity embeddings using existing representation learning methods
+src/
+|-- entmatcher/
+|	|--algorithms/: package of the standalone algorithms
+|	|--extras/: package of the extra modules
+|	|--modules/: package of the main modules
+|	|--embed_matching.py: implementaion of calling the standalone algorithms
+|	|--example.py: implementaion of calling the modules
+```
+
 ## Dependencies
 
 * Python=3.6
@@ -44,27 +65,24 @@ bash stru.sh
 ```
 As for the auxiliary information, we obtain the entity name embeddings from EAE, which can also be found here. 
 ### 2. Matching KGs in entity embedding spaces
+To dcall different algorithms, you can run
 ```
-cd ..
-python infer.py
+cd src
+python embed_matching.py
 ```
+where you can set ```--algorithm``` to ```dinf, csls, rinf, sinkhorn, hun, sm, rl```
+
+Other configurations:
+```--mode``` can be chosen from ```1-to-1, mul, unm```; ```--encoder``` can be chosen from ```gcn, rrea```; ```--features``` can be chosen from ```stru, name, struname```; ```--data_dir``` can be chosen from the dataset directories.
+
+Or you can explore different modules, and design new strategies by following ```exanples.py```
 Main configurations:
 * Similarity metric ```--sim``` can be chosen from ```cosine, euclidean, manhattan```;
 * Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
 * Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
 
-Other configurations:
-```--mode``` can be chosen from ```1-to-1, mul, unm```; ```--encoder``` can be chosen from ```gcn, rrea```; ```--features``` can be chosen from ```stru, name, struname```; ```--data_dir``` can be chosen from the dataset directories.
 
-### 3. Reproducing the results
-You may also directly run the scripts to reproduce the main performance of the compared algorithms. For instance:
 ```
-bash DInf.sh 
-```
-The results on the DWY 100K dataset can be obtained by running:
-```
-bash Large.sh 
-```
-> Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit  when running code repeatedly.
+> Due to the instability of embedding-based methods, it is acceptable that the results of RL fluctuate a little bit when running code repeatedly.
 
 > If you have any questions about reproduction, please feel free to email to zengweixin13@nudt.edu.cn.
