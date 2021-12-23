@@ -5,10 +5,9 @@
 2. [Dependencies](#dependencies)
 3. [Datasets](#datasets)
 4. [Running](#running)
+4. [Reproduction](#reproduction)
 
 ## Overview
-
-
 ```
 data/: datasets
 models/: generating the input unified entity embeddings using existing representation learning methods
@@ -22,7 +21,6 @@ src/
 ```
 
 ## Dependencies
-
 * Python=3.6
 * Tensorflow-gpu=1.13.1
 * Pytorch=1.4.0
@@ -81,8 +79,17 @@ Main configurations:
 * Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
 * Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
 
+## Reproduction
+To reproduce the experimental results in the paper, you can first download the unified structural embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLkyTAVweAziK_YAzp?e=IhIljt) and the name embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLa3tD9al0q12BFGE?e=aqvBZ3). 
+Then put the files under the corresponding directories. 
 
+Next, you can run 
 ```
+cd src
+python embed_matching.py --algorithm dinf --mode 1-to-1 --encoder gcn --features stru --data_dir "../data/zh_en"
+```
+and varying the parameter settings.
+
 > Due to the instability of embedding-based methods, it is acceptable that the results of RL fluctuate a little bit when running code repeatedly.
 
 > If you have any questions about reproduction, please feel free to email to zengweixin13@nudt.edu.cn.
