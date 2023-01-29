@@ -8,6 +8,24 @@
 4. [Reproduction](#reproduction)
 
 ## Overview
+
+<p>
+  <img width="70%" src="https://github.com/nju-websoft/OpenEA/blob/master/software.pdf" />
+</p>
+
+The architecture of EntMatcher library is presented in the blue block of figure above, which takes as input unified entity embeddings and produces the matched entity pairs. 
+It has the following three major features:
+
+* **Loosely-coupled design**. There are three independent modules in EntMatcher, and we have implemented the representative methods in each module. Users are free to combine the techniques in each module to develop new approaches, or to implement their new designs by following the templates in modules. 
+
+* **Reproduction of existing approaches**. We re-implement all existing embedding matching algorithms by using EntMatcher. 
+For instance, the combination of cosine similarity, CSLS, and Greedy algorithm reproduces the CSLS algorithm; and the combination of cosine similarity, None, and Hungarian reproduces the Hungarian algorithm. 
+
+* **Flexible integration with other modules in EA**. EntMatcher is highly flexible, which can be directly called during the development of standalone EA approaches. 
+Besides, users may also use EntMatcher as the backbone and call other modules. 
+For instance, to conduct the experimental evaluations, we implemented the representation learning and auxiliary information modules to generate the unified entity embeddings, as shown in the white blocks of figure above. 
+Finally, EntMatcher is also compatible with existing open-source EA libraries (that mainly focus on representation learning) such as [OpenEA](https://github.com/nju-websoft/OpenEA) and [EAkit](https://github.com/THU-KEG/EAkit). 
+
 ```
 data/: datasets
 models/: generating the input unified entity embeddings using existing representation learning methods
