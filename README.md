@@ -26,6 +26,7 @@ Besides, users may also use EntMatcher as the backbone and call other modules.
 For instance, to conduct the experimental evaluations, we implemented the representation learning and auxiliary information modules to generate the unified entity embeddings, as shown in the white blocks of figure above. 
 Finally, EntMatcher is also compatible with existing open-source EA libraries (that mainly focus on representation learning) such as [OpenEA](https://github.com/nju-websoft/OpenEA) and [EAkit](https://github.com/THU-KEG/EAkit). 
 
+## Organization
 ```
 data/: datasets
 models/: generating the input unified entity embeddings using existing representation learning methods
