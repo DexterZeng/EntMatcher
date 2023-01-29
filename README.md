@@ -10,7 +10,7 @@
 ## Overview
 
 <p>
-  <img width="70%" src="https://github.com/DexterZeng/EntMatcher/blob/master/framework.png" />
+  <img width="70%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework.png" />
 </p>
 
 The architecture of EntMatcher library is presented in the blue block of figure above, which takes as input unified entity embeddings and produces the matched entity pairs. 
