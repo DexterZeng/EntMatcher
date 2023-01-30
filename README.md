@@ -1,11 +1,13 @@
 # EntMatcher
+[![language-python3](https://img.shields.io/badge/Language-Python3-blue.svg?style=flat-square)](https://www.python.org/)
+[![made-with-Pytorch](https://img.shields.io/badge/Made%20with-pytorch-orange.svg?style=flat-square)](https://www.pytorch.org/)
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg?style=flat-square)](https://github.com/DexterZeng/EntMatcher/issues)
 
 ## Contents
 1. [Overview](#overview)
-2. [Dependencies](#dependencies)
+2. [Getting started](#getting-started)
 3. [Datasets](#datasets)
-4. [Running](#running)
-4. [Reproduction](#reproduction)
+4. [Experiments and Results](#experiments-and-results)
 
 ## Overview
 
@@ -26,7 +28,9 @@ Besides, users may also use EntMatcher as the backbone and call other modules.
 For instance, to conduct the experimental evaluations, we implemented the representation learning and auxiliary information modules to generate the unified entity embeddings, as shown in the white blocks of figure above. 
 Finally, EntMatcher is also compatible with existing open-source EA libraries (that mainly focus on representation learning) such as [OpenEA](https://github.com/nju-websoft/OpenEA) and [EAkit](https://github.com/THU-KEG/EAkit). 
 
-## Organization
+## Getting started
+
+### Code organization
 ```
 data/: datasets
 models/: generating the input unified entity embeddings using existing representation learning methods
@@ -39,7 +43,7 @@ src/
 |	|--example.py: implementaion of calling the modules
 ```
 
-## Dependencies
+### Dependencies
 * Python=3.6
 * Tensorflow-gpu=1.13.1
 * Pytorch=1.4.0
@@ -47,30 +51,12 @@ src/
 * Numpy
 * Scikit-learn
 
-## Datasets
-
-### Existing Datasets
-The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE).
-
-Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
-* ent_ids_1: ids for entities in source KG (ZH);
-* ent_ids_1_trans_goo: entities in source KG (ZH) with translated names (only for cross-lingual datasets);
-* ent_ids_2: ids for entities in target KG (EN);
-* ill_ent_ids: all labeled entity links;
-* ref_ent_ids: entity links for testing;
-* val_ent_ids: entity links for validation;
-* sup_ent_ids: entity links for training;
-* triples_1: relation triples encoded by ids in source KG (ZH);
-* triples_2: relation triples encoded by ids in target KG (EN);
-
-### Non 1-to-1 Alignment Dataset
-We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as mul), which adopts the same format.
+### Installation
+xxx
 
 ### Usage
-Unzip the data.zip. For the usage of auxiliary information, obtain the name embedding files and place them under corresponding dataset directories.
 
-## Running
-### 1. Generate input unified entity embeddings
+#### 1. Generate input unified entity embeddings
 ```
 cd models
 python gcn.py –data_dir "zh_en"
@@ -81,8 +67,8 @@ The data_dir could be chosen from the directories of these datasets. Or you can 
 bash stru.sh
 ```
 As for the auxiliary information, we obtain the entity name embeddings from EAE, which can also be found here. 
-### 2. Matching KGs in entity embedding spaces
-To dcall different algorithms, you can run
+#### 2. Matching KGs in entity embedding spaces
+To call different algorithms, you can run
 ```
 cd src
 python embed_matching.py
@@ -98,7 +84,31 @@ Main configurations:
 * Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
 * Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
 
-## Reproduction
+
+## Datasets
+
+#### Existing Datasets
+The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE).
+
+Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
+* ent_ids_1: ids for entities in source KG (ZH);
+* ent_ids_1_trans_goo: entities in source KG (ZH) with translated names (only for cross-lingual datasets);
+* ent_ids_2: ids for entities in target KG (EN);
+* ill_ent_ids: all labeled entity links;
+* ref_ent_ids: entity links for testing;
+* val_ent_ids: entity links for validation;
+* sup_ent_ids: entity links for training;
+* triples_1: relation triples encoded by ids in source KG (ZH);
+* triples_2: relation triples encoded by ids in target KG (EN);
+
+#### Non 1-to-1 Alignment Dataset
+We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as mul), which adopts the same format.
+
+#### Usage
+Unzip the data.zip. For the usage of auxiliary information, obtain the name embedding files and place them under corresponding dataset directories.
+
+
+## Experiments and Results
 To reproduce the experimental results in the paper, you can first download the unified structural embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLkyTAVweAziK_YAzp?e=IhIljt) and the name embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLa3tD9al0q12BFGE?e=aqvBZ3). 
 Then put the files under the corresponding directories. 
 
@@ -109,6 +119,6 @@ python embed_matching.py --algorithm dinf --mode 1-to-1 --encoder gcn --features
 ```
 and varying the parameter settings.
 
-> Due to the instability of embedding-based methods, it is acceptable that the results of RL fluctuate a little bit when running code repeatedly.
+> Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit when running code repeatedly.
 
 > If you have any questions about reproduction, please feel free to email to zengweixin13@nudt.edu.cn.
