@@ -109,7 +109,7 @@ Unzip the data.zip. For the usage of auxiliary information, obtain the name embe
 
 
 ## Experiments and Results
-To reproduce the experimental results in the paper, you can first download the unified structural embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLkyTAVweAziK_YAzp?e=IhIljt) and the name embeddings [here](https://1drv.ms/u/s!Ar-uYoG1mfiLa3tD9al0q12BFGE?e=aqvBZ3). 
+To reproduce the experimental results in the paper, you can first download the unified structural embeddings and the name embeddings. 
 Then put the files under the corresponding directories. 
 
 Next, you can run 
