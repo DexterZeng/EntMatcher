@@ -52,11 +52,14 @@ src/
 * Scikit-learn
 
 ### Installation
+We recommend creating a new conda environment to install and run EntMatcher. 
+```
 conda create -n entmatcher python=3.7
 conda activate entmatcher
 conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c pytorch
 conda install scipy
 conda install tensorflow-gpu=2.6.0
+```
 
 Then, EntMatcher can be installed using pip with the following steps:
 ```
