@@ -52,10 +52,42 @@ src/
 * Scikit-learn
 
 ### Installation
-xxx
+conda create -n entmatcher python=3.7
+conda activate entmatcher
+conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c pytorch
+conda install scipy
+conda install tensorflow-gpu=2.6.0
 
+Then, EntMatcher can be installed using pip with the following steps:
+```
+git clone https://github.com/DexterZeng/EntMatcher.git EntMatcher
+cd EntMatcher
+pip install EntMatcher-0.1.tar.gz
+```
 ### Usage
+The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)
 
+First, you need to generate vectors from the EA model and save them to an npy file named after the model. Like the follows:
+```
+python rrea.py --data_dir "zh_en"
+```
+Then, you can use these vectors to select the appropriate algorithm for matching calculations.
+```
+python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csls
+```
+A detail example can be seen as follows:
+```
+import entmatcher as em
+
+model = rrea
+args = load_args("hyperparameter file folder")
+kgs = read_kgs_from_folder("data folder")
+dataset = em.extras.Datasets(args)
+algorithms = em.algorithms.csls
+se_vec = np.load(args.data_dir + '/' + args.encoder + '.npy')
+name_vec = dataset.loadNe()
+algorithms.match([se_vec, name_vec], dataset)
+```
 #### 1. Generate input unified entity embeddings
 ```
 cd models
