@@ -65,29 +65,7 @@ cd EntMatcher
 pip install EntMatcher-0.1.tar.gz
 ```
 ### Usage
-The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)
 
-First, you need to generate vectors from the EA model and save them to an npy file named after the model. Like the follows:
-```
-python rrea.py --data_dir "zh_en"
-```
-Then, you can use these vectors to select the appropriate algorithm for matching calculations.
-```
-python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csls
-```
-A detail example can be seen as follows:
-```
-import entmatcher as em
-
-model = rrea
-args = load_args("hyperparameter file folder")
-kgs = read_kgs_from_folder("data folder")
-dataset = em.extras.Datasets(args)
-algorithms = em.algorithms.csls
-se_vec = np.load(args.data_dir + '/' + args.encoder + '.npy')
-name_vec = dataset.loadNe()
-algorithms.match([se_vec, name_vec], dataset)
-```
 #### 1. Generate input unified entity embeddings
 ```
 cd models
@@ -116,6 +94,30 @@ Main configurations:
 * Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
 * Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
 
+
+#### 3. The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)
+
+First, you need to generate vectors from the EA model and save them to an npy file named after the model.
+```
+python rrea.py --data_dir "zh_en"
+```
+Then, you can use these vectors to select the appropriate algorithm for matching calculations.
+```
+import entmatcher as em
+
+model = args.encoder
+args = load_args("hyperparameter file folder")
+kgs = read_kgs_from_folder("data folder")
+dataset = em.extras.Datasets(args)
+algorithms = em.algorithms.csls
+se_vec = np.load(args.data_dir + '/' + args.encoder + '.npy')
+name_vec = dataset.loadNe()
+algorithms.match([se_vec, name_vec], dataset)
+```
+For a more convenient use, You can use the code we prepared and just adjust the parameters to run： 
+```
+python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csls --features stru
+```
 
 ## Datasets
 
