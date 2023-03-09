@@ -58,7 +58,7 @@ conda create -n entmatcher python=3.6
 conda activate entmatcher
 conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c pytorch
 conda install scipy
-conda install tensorflow-gpu=1.13.1
+conda install tensorflow-gpu==1.13.1
 ```
 
 Then, EntMatcher can be installed using pip with the following steps:
@@ -72,8 +72,8 @@ pip install EntMatcher-0.1.tar.gz
 #### 1. Generate input unified entity embeddings
 ```
 cd models
-python gcn.py –-data_dir "zh_en"
-python rrea.py –-data_dir "zh_en"
+python gcn.py --data_dir "zh_en"
+python rrea.py --data_dir "zh_en"
 ```
 The data_dir could be chosen from the directories of these datasets. Or you can directly run:
 ```
