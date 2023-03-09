@@ -72,8 +72,8 @@ pip install EntMatcher-0.1.tar.gz
 #### 1. Generate input unified entity embeddings
 ```
 cd models
-python gcn.py –data_dir "zh_en"
-python rrea.py –data_dir "zh_en"
+python gcn.py –-data_dir "zh_en"
+python rrea.py –-data_dir "zh_en"
 ```
 The data_dir could be chosen from the directories of these datasets. Or you can directly run:
 ```
