@@ -55,11 +55,12 @@ src/
 ### Installation
 We recommend creating a new conda environment to install and run EntMatcher. 
 ```
-conda create -n entmatcher python=3.6
+conda create -n entmatcher python=3.8.10
 conda activate entmatcher
 conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c pytorch
 conda install scipy
-conda install tensorflow-gpu==1.13.1
+conda install tensorflow-gpu==2.6.0
+conda install Keras=2.6.0
 ```
 
 Then, EntMatcher can be installed using pip with the following steps:
