@@ -44,10 +44,11 @@ src/
 ```
 
 ### Dependencies
-* Python=3.6
-* Tensorflow-gpu=1.13.1
-* Pytorch=1.4.0
-* Scipy
+* Python=3.8.10
+* Tensorflow-gpu=2.6.0
+* Pytorch=1.7.1
+* Scipy=1.7
+* Keras=2.6.0
 * Numpy
 * Scikit-learn
 
