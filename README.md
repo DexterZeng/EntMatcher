@@ -22,7 +22,7 @@
 ## Overview
 
 <p>
-  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework1.png" />
+  <img width="50%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework1.png" />
 </p>
 
 We use [Python](https://www.python.org/), [Pytorch](https://www.pytorch.org/) and [Tensorflow](https://www.tensorflow.org/) to develop an open-source library, namely **EntMatcher**.
