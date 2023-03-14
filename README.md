@@ -1,19 +1,32 @@
-# EntMatcher
+# EntMatcher: An Open-source Library
+# Paper: A Benchmarking Study of Embedding-based Entity Alignment for Knowledge Graphs
 [![language-python3](https://img.shields.io/badge/Language-Python3-blue.svg?style=flat-square)](https://www.python.org/)
 [![made-with-Pytorch](https://img.shields.io/badge/Made%20with-pytorch-orange.svg?style=flat-square)](https://www.pytorch.org/)
 [![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg?style=flat-square)](https://github.com/DexterZeng/EntMatcher/issues)
 
+> Entity alignment (EA) identifies equivalent entities that locate in different knowledge graphs (KGs), and has attracted growing research interests over the last few years with the advancement of KG embedding techniques. Although a pile of embedding-based EA frameworks have been developed, they mainly focus on improving the performance of entity representation learning, while largely overlook the subsequent stage that matches KGs in entity embedding spaces. Nevertheless, accurately matching entities based on learned entity representations is crucial to the overall alignment performance, as it coordinates individual alignment decisions and determines the global matching result. Hence, it is essential to understand how well existing solutions for matching KGs in entity embedding spaces perform on present benchmarks, as well as their strengths and weaknesses. To this end, in this article we provide a comprehensive survey and evaluation of matching algorithms for KGs in entity embedding spaces in terms of effectiveness and efficiency on both classic settings and new scenarios that better mirror real-life challenges. Based on in-depth analysis, we provide useful insights into the design trade-offs and good paradigms of existing works, and suggest promising directions for future development. 
+
 ## Contents
 1. [Overview](#overview)
 2. [Getting started](#getting-started)
+    1. [Code organization](#Code-organization)
+    2. [Dependencies](#dependencies)
+    3. [Installation](#installation)
+    4. [Usage](#usage)
 3. [Datasets](#datasets)
 4. [Experiments and Results](#experiments-and-results)
+    1. [Experiment Settings](#experiment-settings)
+    2. [Detailed Results](#detailed-results)
+5. [Citation](#citation)
+
 
 ## Overview
 
 <p>
-  <img width="50%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework.png" />
+  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework1.png" />
 </p>
+
+We use [Python](https://www.python.org/), [Pytorch](https://www.pytorch.org/) and [Tensorflow](https://www.tensorflow.org/) to develop an open-source library, namely **EntMatcher**.
 
 The architecture of EntMatcher library is presented in the blue block of figure above, which takes as input unified entity embeddings and produces the matched entity pairs. 
 It has the following three major features:
@@ -28,6 +41,24 @@ Besides, users may also use EntMatcher as the backbone and call other modules.
 For instance, to conduct the experimental evaluations, we implemented the representation learning and auxiliary information modules to generate the unified entity embeddings, as shown in the white blocks of figure above. 
 Finally, EntMatcher is also compatible with existing open-source EA libraries (that mainly focus on representation learning) such as [OpenEA](https://github.com/nju-websoft/OpenEA) and [EAkit](https://github.com/THU-KEG/EAkit). 
 
+Currently, EntMatcher Library (with additional modules)has integrated the following modules, and the approaches in modules can be combined arbitrarily:
+* **Representation Learning Module**.
+    1. **GCN**: [Cross-lingual Knowledge Graph Alignment via Graph Convolutional Networks](https://www.aclweb.org/anthology/D18-1032). EMNLP 2018.
+    2. **RREA**: [Relational reflection entity alignment](https://arxiv.org/pdf/2008.07962.pdf). CIKM 2022.
+    3. **...**(such as [OpenEA](https://github.com/nju-websoft/OpenEA))
+* **EntMatcher Module**.
+    1. **CSLS**: [Word translation without parallel data](https://arxiv.org/pdf/1710.04087.pdf). ICLR 2018.
+    2. **RInf**: [On entity alignment at scale](https://dl.acm.org/doi/abs/10.1007/s00778-021-00703-3). VLDB J 2021.
+    3. **Sinkhorn**: [Clusterea: Scalable entity alignment with stochastic training and normalized mini-batch similarities](https://arxiv.org/pdf/2205.10312.pdf). SIGKDD 2022.
+    4. **DInf**: [Relation-aware entity alignment for heterogeneous knowledge graphs](https://arxiv.org/pdf/1908.08210.pdf). IJCAI 2019.
+    5. **Greedy**: [ Deep graph matching consensus](https://arxiv.org/pdf/2001.09621.pdf). ICLR 2020.
+    6. **SMat**: [Collective entity alignment via adaptive features](https://arxiv.org/pdf/1912.08404.pdf). ICDE 2020.
+    7.  **Hun.**: [From alignment to assignment: Frustratingly simple unsupervised entity alignment](https://aclanthology.org/2021.emnlp-main.226.pdf). EMNLP 2021.
+    8.  **RL**: [Reinforcement learning-based collective entity alignment with adaptive features](https://arxiv.org/pdf/2101.01353.pdf). ACM Trans. Inf. Syst. 2021.
+* **Auxiliary Information Module**.
+    1. **Name**.
+    2. **Description**.
+   
 ## Getting started
 
 ### Code organization
@@ -44,13 +75,15 @@ src/
 ```
 
 ### Dependencies
-* Python=3.8.10
-* Tensorflow-gpu=2.6.0
+* Python>=3.7 (tested on Python=3.8.10)
+* Tensorflow-gpu=2.x (tested on Tensorflow-gpu=2.6.0)
 * Pytorch=1.7.1
 * Scipy=1.7
 * Keras=2.6.0
 * Numpy
 * Scikit-learn
+* fml
+
 
 ### Installation
 We recommend creating a new conda environment to install and run EntMatcher. 
@@ -60,7 +93,7 @@ conda activate entmatcher
 conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c pytorch
 conda install scipy
 conda install tensorflow-gpu==2.6.0
-conda install Keras=2.6.0
+conda install Keras==2.6.0
 ```
 
 Then, EntMatcher can be installed using pip with the following steps:
@@ -93,7 +126,7 @@ where you can set ```--algorithm``` to ```dinf, csls, rinf, sinkhorn, hun, sm, r
 Other configurations:
 ```--mode``` can be chosen from ```1-to-1, mul, unm```; ```--encoder``` can be chosen from ```gcn, rrea```; ```--features``` can be chosen from ```stru, name, struname```; ```--data_dir``` can be chosen from the dataset directories.
 
-Or you can explore different modules, and design new strategies by following ```exanples.py```
+Or you can explore different modules, and design new strategies by following ```examples.py```
 Main configurations:
 * Similarity metric ```--sim``` can be chosen from ```cosine, euclidean, manhattan```;
 * Score optimization ```--scoreop``` can be chosen from ```csls, sinkhorn, rinf none```;
