@@ -166,9 +166,7 @@ python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csl
 ## Datasets
 
 ### Existing Datasets statistics
-<p>
-  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
-</p>
+<img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
 The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE):
 
 
