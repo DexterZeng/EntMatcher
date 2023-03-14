@@ -17,7 +17,6 @@
 4. [Experiments and Results](#experiments-and-results)
     1. [Experiment Settings](#experiment-settings)
     2. [Detailed Results](#detailed-results)
-5. [Citation](#citation)
 
 
 ## Overview
