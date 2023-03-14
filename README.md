@@ -7,22 +7,29 @@
 > Entity alignment (EA) identifies equivalent entities that locate in different knowledge graphs (KGs), and has attracted growing research interests over the last few years with the advancement of KG embedding techniques. Although a pile of embedding-based EA frameworks have been developed, they mainly focus on improving the performance of entity representation learning, while largely overlook the subsequent stage that matches KGs in entity embedding spaces. Nevertheless, accurately matching entities based on learned entity representations is crucial to the overall alignment performance, as it coordinates individual alignment decisions and determines the global matching result. Hence, it is essential to understand how well existing solutions for matching KGs in entity embedding spaces perform on present benchmarks, as well as their strengths and weaknesses. To this end, in this article we provide a comprehensive survey and evaluation of matching algorithms for KGs in entity embedding spaces in terms of effectiveness and efficiency on both classic settings and new scenarios that better mirror real-life challenges. Based on in-depth analysis, we provide useful insights into the design trade-offs and good paradigms of existing works, and suggest promising directions for future development. 
 
 ## Contents
-1. [Overview](#overview)
-2. [Getting started](#getting-started)
-    1. [Code organization](#Code-organization)
-    2. [Dependencies](#dependencies)
-    3. [Installation](#installation)
-    4. [Usage](#usage)
-3. [Datasets](#datasets)
-4. [Experiments and Results](#experiments-and-results)
-    1. [Experiment Settings](#experiment-settings)
-    2. [Detailed Results](#detailed-results)
+- [EntMatcher: An Open-source Library](#entmatcher-an-open-source-library)
+- [Paper: A Benchmarking Study of Embedding-based Entity Alignment for Knowledge Graphs](#paper-a-benchmarking-study-of-embedding-based-entity-alignment-for-knowledge-graphs)
+  - [Contents](#contents)
+  - [Overview](#overview)
+  - [Getting started](#getting-started)
+    - [Code organization](#code-organization)
+    - [Dependencies](#dependencies)
+    - [Installation](#installation)
+    - [Usage](#usage)
+      - [1. Generate input unified entity embeddings](#1-generate-input-unified-entity-embeddings)
+      - [2. Matching KGs in entity embedding spaces](#2-matching-kgs-in-entity-embedding-spaces)
+      - [3. The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)](#3-the-following-is-an-example-about-how-to-use-entmatcher-in-python-we-assume-that-you-have-already-downloaded-our-datasets)
+  - [Datasets](#datasets)
+    - [Existing Datasets statistics](#existing-datasets-statistics)
+    - [Non 1-to-1 Alignment Dataset](#non-1-to-1-alignment-dataset)
+    - [Usage](#usage-1)
+  - [Experiments and Results](#experiments-and-results)
 
 
 ## Overview
 
 <p>
-  <img width="50%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework1.png" />
+  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/framework1.png" />
 </p>
 
 We use [Python](https://www.python.org/), [Pytorch](https://www.pytorch.org/) and [Tensorflow](https://www.tensorflow.org/) to develop an open-source library, namely **EntMatcher**.
@@ -158,8 +165,21 @@ python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csl
 
 ## Datasets
 
-#### Existing Datasets
-The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE).
+### Existing Datasets statistics
+The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE):
+
+
+The folder names of the datasets used by the code are as follows:
+* DBP15K/D-Z: ```data/zh_en```
+* DBP15K/D-J: ```data/ja_en```
+* DBP15K/D-F: ```data/fr_en```
+* SRPRS/S-F: ```data/en_fr_15k_V1```
+* SRPRS/S-D: ```data/en_de_15k_V1```
+* SRPRS/S-W: ```data/dbp_wd_15k_V1```
+* SRPRS/S-Y: ```data/dbp_yg_15k_V1```
+* DWY100K/D-W: ```data/dbp_wd_100```
+* DWY100K/D-Y: ```data/dbp_yg_100```
+* FB_DBP_MUL: ```data/mul```
 
 Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
 * ent_ids_1: ids for entities in source KG (ZH);
@@ -172,10 +192,10 @@ Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
 * triples_1: relation triples encoded by ids in source KG (ZH);
 * triples_2: relation triples encoded by ids in target KG (EN);
 
-#### Non 1-to-1 Alignment Dataset
+### Non 1-to-1 Alignment Dataset
 We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as mul), which adopts the same format.
 
-#### Usage
+### Usage
 Unzip the data.zip. For the usage of auxiliary information, obtain the name embedding files and place them under corresponding dataset directories.
 
 
