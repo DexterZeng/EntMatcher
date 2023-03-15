@@ -216,7 +216,7 @@ We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened
 ### Usage
 Unzip the ```data.zip```. For the usage of auxiliary information, obtain the [name embeddings] and [structural embeddings] files and place them under corresponding dataset directories.
 
-For example, in the name embeddings, put ```name/zh_en/name_trans_vec_ftext.txt``` files in the ```name/zh_en``` folder into the ```data/zh_en``` folder.
+For example, in the name embeddings, put ```name/zh_en/name_trans_vec_ftext.txt``` file in the ```name/zh_en``` folder into the ```data/zh_en``` folder.
 
 ## Experiments and Results
 To reproduce the experimental results in the paper, you can first download the unified [structural embeddings] and [the name embeddings]. 
