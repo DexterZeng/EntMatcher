@@ -21,7 +21,7 @@
     - [Existing Datasets statistics](#existing-datasets-statistics)
     - [Dataset Description](#dataset-description)
     - [Non 1-to-1 Alignment Dataset](#non-1-to-1-alignment-dataset)
-    - [Usage](#usage-1)
+    - [Dataset Usage](#dataset-usage)
   - [Experiments and Results](#experiments-and-results)
     - [Experiment Settings](#experiment-settings)
       - [Hardware configuration and hyper-parameter setting](#hardware-configuration-and-hyper-parameter-setting)
@@ -106,6 +106,7 @@ conda install pytorch==1.x torchvision==0.x torchaudio==0.x cudatoolkit=xxx -c p
 conda install scipy
 conda install tensorflow-gpu==2.6.0
 conda install Keras==2.6.0
+conda install -c conda-forge fml
 ```
 
 Then, EntMatcher can be installed using pip with the following steps:
@@ -126,6 +127,9 @@ The data_dir could be chosen from the directories of these datasets. Or you can 
 ```
 bash stru.sh
 ```
+
+If you want to reproduce our results, you can download the trained [structural embeddings] we provide. Among them, ```vec.npy``` is a structural embedding trained by **GCN**, and ```vec-new.npy``` is a structural embedding trained by **RREA**.
+
 As for the auxiliary information, we obtain the entity name embeddings from EAE, which can also be found here. 
 #### 2. Matching KGs in entity embedding spaces
 To call different algorithms, you can run
@@ -146,7 +150,7 @@ Main configurations:
 
 
 #### 3. Example
-The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our [datasets](#datasets) and know how to [use](#Usage) it)
+The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our [datasets](#datasets) and know how to [use](#Dataset-Usage) it)
 
 First, you need to generate vectors from the EA model and save them to an npy file named after the model.
 ```
@@ -179,7 +183,6 @@ We used popular EA benchmarks for evaluation:
 * **DWY100K**, a larger dataset consisting of two monolingual KG pairs: DBpedia to Wikidata (D-W) and DBpedia to YAGO (D-Y). 
 
 The detailed statistics can be found in Table, where the numbers of entities, relations, triples, gold links, and the average entity degree are reported.
-
 <p>
   <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
 </p>
@@ -213,7 +216,7 @@ Take the dataset **DBP15K (ZH-EN)** as an example, the folder ```data/zh_en``` c
 ### Non 1-to-1 Alignment Dataset
 We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as **mul**), which adopts the same format.
 
-### Usage
+### Dataset Usage
 Unzip the ```data.zip```. For the usage of auxiliary information, obtain the [name embeddings] and [structural embeddings] files and place them under corresponding dataset directories.
 
 For example, in the name embeddings, put ```name/zh_en/name_trans_vec_ftext.txt``` file in the ```name/zh_en``` folder into the ```data/zh_en``` folder.
@@ -256,13 +259,14 @@ and varying the parameter settings.
 The results of the experiment using only structural information and using auxiliary information are as follows:
 #### The F1 scores of only using structural information
 <p>
-  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/structural.png" />
+  <img width="85%" src="https://github.com/DexterZeng/EntMatcher/blob/main/structural.png" />
 </p>
 
 #### The F1 scores of using auxiliary information
 <p>
-  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/auxiliary.png" />
+  <img width="85%" src="https://github.com/DexterZeng/EntMatcher/blob/main/auxiliary.png" />
 </p>
+
 
 > Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit when running code repeatedly.
 
