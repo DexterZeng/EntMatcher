@@ -28,7 +28,9 @@
       - [Representation learning models](#representation-learning-models)
       - [Auxiliary information for alignment](#auxiliary-information-for-alignment)
       - [Similarity metric](#similarity-metric)
-    - [Detailed Results](#detailed-results)
+    - [Results](#results)
+      - [The F1 scores of only using structural information](#the-f1-scores-of-only-using-structural-information)
+      - [The F1 scores of using auxiliary information](#the-f1-scores-of-using-auxiliary-information)
 
 ## Overview
 
@@ -235,13 +237,32 @@ Although EA underlines the use of graph structure for alignment([An experimental
 
 #### Similarity metric
 After obtaining the unified entity representations E, a similarity metric is required to produce pairwise scores and generate the similarity matrix S. Frequent choices include the cosine similarity, the Euclidean distance and the Manhattan distance.In this work, we followed mainstream works and adopted the cosine similarity.
+
 Next, you can run 
 ```
 cd src
 python embed_matching.py --algorithm dinf --mode 1-to-1 --encoder gcn --features stru --data_dir "../data/zh_en"
 ```
+Or you can directly run:
+```
+bash structural.sh
+bash auxiliary.sh
+```
 and varying the parameter settings.
-### Detailed Results
+### Results
+The results of the experiment using only structural information and using auxiliary information are as follows:
+#### The F1 scores of only using structural information
+<p>
+  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/structural.png" />
+</p>
+
+#### The F1 scores of using auxiliary information
+<p>
+  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/auxiliary.png" />
+</p>
+
 > Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit when running code repeatedly.
+
+> More features and experimental results will be published in subsequent papers.
 
 > If you have any questions about reproduction, please feel free to email to zengweixin13@nudt.edu.cn.
