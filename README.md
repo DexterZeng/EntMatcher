@@ -1,5 +1,4 @@
 # EntMatcher: An Open-source Library
-# Paper: A Benchmarking Study of Embedding-based Entity Alignment for Knowledge Graphs
 [![language-python3](https://img.shields.io/badge/Language-Python3-blue.svg?style=flat-square)](https://www.python.org/)
 [![made-with-Pytorch](https://img.shields.io/badge/Made%20with-pytorch-orange.svg?style=flat-square)](https://www.pytorch.org/)
 [![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg?style=flat-square)](https://github.com/DexterZeng/EntMatcher/issues)
@@ -47,7 +46,7 @@ Besides, users may also use EntMatcher as the backbone and call other modules.
 For instance, to conduct the experimental evaluations, we implemented the representation learning and auxiliary information modules to generate the unified entity embeddings, as shown in the white blocks of figure above. 
 Finally, EntMatcher is also compatible with existing open-source EA libraries (that mainly focus on representation learning) such as [OpenEA](https://github.com/nju-websoft/OpenEA) and [EAkit](https://github.com/THU-KEG/EAkit). 
 
-Currently, EntMatcher Library (with additional modules)has integrated the following modules, and the approaches in modules can be combined arbitrarily:
+Currently, EntMatcher Library (with additional modules) has integrated the following modules, and the approaches in modules can be combined arbitrarily:
 * **Representation Learning Module**.
     1. **GCN**: [Cross-lingual Knowledge Graph Alignment via Graph Convolutional Networks](https://www.aclweb.org/anthology/D18-1032). EMNLP 2018.
     2. **RREA**: [Relational reflection entity alignment](https://arxiv.org/pdf/2008.07962.pdf). CIKM 2022.
