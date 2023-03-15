@@ -179,9 +179,11 @@ We used popular EA benchmarks for evaluation:
 * **DWY100K**, a larger dataset consisting of two monolingual KG pairs: DBpedia to Wikidata (D-W) and DBpedia to YAGO (D-Y). 
 
 The detailed statistics can be found in Table, where the numbers of entities, relations, triples, gold links, and the average entity degree are reported.
+
 <p>
   <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
 </p>
+
 The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE):
 
 ### Dataset Description
