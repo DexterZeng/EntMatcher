@@ -7,7 +7,6 @@
 
 ## Contents
 - [EntMatcher: An Open-source Library](#entmatcher-an-open-source-library)
-- [Paper: A Benchmarking Study of Embedding-based Entity Alignment for Knowledge Graphs](#paper-a-benchmarking-study-of-embedding-based-entity-alignment-for-knowledge-graphs)
   - [Contents](#contents)
   - [Overview](#overview)
   - [Getting started](#getting-started)
@@ -17,13 +16,19 @@
     - [Usage](#usage)
       - [1. Generate input unified entity embeddings](#1-generate-input-unified-entity-embeddings)
       - [2. Matching KGs in entity embedding spaces](#2-matching-kgs-in-entity-embedding-spaces)
-      - [3. The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)](#3-the-following-is-an-example-about-how-to-use-entmatcher-in-python-we-assume-that-you-have-already-downloaded-our-datasets)
+      - [3. Example](#3-example)
   - [Datasets](#datasets)
     - [Existing Datasets statistics](#existing-datasets-statistics)
+    - [Dataset Description](#dataset-description)
     - [Non 1-to-1 Alignment Dataset](#non-1-to-1-alignment-dataset)
     - [Usage](#usage-1)
   - [Experiments and Results](#experiments-and-results)
-
+    - [Experiment Settings](#experiment-settings)
+      - [Hardware configuration and hyper-parameter setting](#hardware-configuration-and-hyper-parameter-setting)
+      - [Representation learning models](#representation-learning-models)
+      - [Auxiliary information for alignment](#auxiliary-information-for-alignment)
+      - [Similarity metric](#similarity-metric)
+    - [Detailed Results](#detailed-results)
 
 ## Overview
 
@@ -138,7 +143,8 @@ Main configurations:
 * Matching constraint ```--match``` can be chosen from ```hun, sm, rl, greedy```;
 
 
-#### 3. The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our datasets)
+#### 3. Example
+The following is an example about how to use EntMatcher in Python (We assume that you have already downloaded our [datasets](#datasets) and know how to [use](#Usage) it)
 
 First, you need to generate vectors from the EA model and save them to an npy file named after the model.
 ```
@@ -165,25 +171,31 @@ python embed_matching.py --data_dir ../data/zh_en --encoder rrea --algorithm csl
 ## Datasets
 
 ### Existing Datasets statistics
+We used popular EA benchmarks for evaluation: 
+* **DBP15K**, which comprises three multilingual KG pairs extracted from DBpedia: English to Chinese (DZ), English to Japanese (D-J), and English to French (D-F).
+* **SRPRS**, which is a sparser dataset that follows reallife entity distribution, including two multilingual KG pairs extracted from DBpedia: English to French (S-F) and English to German (S-D), and two mono-lingual KG pairs: DBpedia to Wikidata (S-W) and DBpedia to YAGO (S-Y).
+* **DWY100K**, a larger dataset consisting of two monolingual KG pairs: DBpedia to Wikidata (D-W) and DBpedia to YAGO (D-Y). 
+
+The detailed statistics can be found in Table, where the numbers of entities, relations, triples, gold links, and the average entity degree are reported.
 <p>
-  <img width="90%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
+  <img width="75%" src="https://github.com/DexterZeng/EntMatcher/blob/main/Dataset_statistics.png" />
 </p>
 The original datasets are obtained from [DBP15K dataset](https://github.com/nju-websoft/BootEA),  [GCN-Align](https://github.com/1049451037/GCN-Align) and [JAPE](https://github.com/nju-websoft/JAPE):
 
+### Dataset Description
+Regarding the gold alignment links, we adopted 70% as test set, 20% for training,and 10% for validation.The folder names of the datasets used by the code are as follows:
+* **DBP15K/D-Z**: ```data/zh_en```
+* **DBP15K/D-J**: ```data/ja_en```
+* **DBP15K/D-F**: ```data/fr_en```
+* **SRPRS/S-F**: ```data/en_fr_15k_V1```
+* **SRPRS/S-D**: ```data/en_de_15k_V1```
+* **SRPRS/S-W**: ```data/dbp_wd_15k_V1```
+* **SRPRS/S-Y**: ```data/dbp_yg_15k_V1```
+* **DWY100K/D-W**: ```data/dbp_wd_100```
+* **DWY100K/D-Y**: ```data/dbp_yg_100```
+* **FB_DBP_MUL**: ```data/mul```
 
-The folder names of the datasets used by the code are as follows:
-* DBP15K/D-Z: ```data/zh_en```
-* DBP15K/D-J: ```data/ja_en```
-* DBP15K/D-F: ```data/fr_en```
-* SRPRS/S-F: ```data/en_fr_15k_V1```
-* SRPRS/S-D: ```data/en_de_15k_V1```
-* SRPRS/S-W: ```data/dbp_wd_15k_V1```
-* SRPRS/S-Y: ```data/dbp_yg_15k_V1```
-* DWY100K/D-W: ```data/dbp_wd_100```
-* DWY100K/D-Y: ```data/dbp_yg_100```
-* FB_DBP_MUL: ```data/mul```
-
-Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
+Take the dataset **DBP15K (ZH-EN)** as an example, the folder ```data/zh_en``` contains:
 * ent_ids_1: ids for entities in source KG (ZH);
 * ent_ids_1_trans_goo: entities in source KG (ZH) with translated names (only for cross-lingual datasets);
 * ent_ids_2: ids for entities in target KG (EN);
@@ -195,23 +207,41 @@ Take the dataset DBP15K (ZH-EN) as an example, the folder "zh_en" contains:
 * triples_2: relation triples encoded by ids in target KG (EN);
 
 ### Non 1-to-1 Alignment Dataset
-We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as mul), which adopts the same format.
+We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as **mul**), which adopts the same format.
 
 ### Usage
-Unzip the data.zip. For the usage of auxiliary information, obtain the name embedding files and place them under corresponding dataset directories.
+Unzip the ```data.zip```. For the usage of auxiliary information, obtain the [name embeddings] and [structural embeddings] files and place them under corresponding dataset directories.
 
 
 ## Experiments and Results
-To reproduce the experimental results in the paper, you can first download the unified structural embeddings and the name embeddings. 
+To reproduce the experimental results in the paper, you can first download the unified [structural embeddings] and [the name embeddings]. 
 Then put the files under the corresponding directories. 
+### Experiment Settings
+#### Hardware configuration and hyper-parameter setting
+We followed the configurations presented in the original papers of these algorithms, and tuned the hyper-parameters on the validation set. 
+* Specifically, for **CSLS**, we set k to 1, except on the non 1-to-1 setting where we set it to 5. 
+* Similarly, regarding **RInf**, we changed the maximum operation in Equation 2 to top-k average operation on the non 1-to-1 setting, where k is set to 5. 
+* As to **Sink**., we set l to 100. 
+* For **RL**, we found the hyper-parameters in the original paper could already produce the best results, and directly adopted them. 
+* The rest of the approaches, i.e., **DInf**, **Hun.**, and **SMat**, do not contain hyperparameters.
 
+#### Representation learning models
+Since representation learning is not the focus of this work, we adopted two frequently used models, i.e., **RREA**  and **GCN** . 
+* Concretely, **GCN** is one of the simplest models, which uses graph convolutional networks to learn the structural embeddings.
+* **RREA** is one of the best-performing solutions, which leverages relational reflection transformation to obtain relation-specific entity embeddings.
+
+#### Auxiliary information for alignment
+Although EA underlines the use of graph structure for alignment([An experimental study of state-of-the-art entity alignment approaches,IEE TKDE 2020](https://ieeexplore.ieee.org/document/9174835)), for a more comprehensive evaluation, we examined the influence of auxiliary information on the matching results by following previous works and using entity name embeddings to facilitate alignment. We also combined these two channels of information with equal weights to generate the fused similarity matrix for matching.
+
+#### Similarity metric
+After obtaining the unified entity representations E, a similarity metric is required to produce pairwise scores and generate the similarity matrix S. Frequent choices include the cosine similarity, the Euclidean distance and the Manhattan distance.In this work, we followed mainstream works and adopted the cosine similarity.
 Next, you can run 
 ```
 cd src
 python embed_matching.py --algorithm dinf --mode 1-to-1 --encoder gcn --features stru --data_dir "../data/zh_en"
 ```
 and varying the parameter settings.
-
+### Detailed Results
 > Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit when running code repeatedly.
 
 > If you have any questions about reproduction, please feel free to email to zengweixin13@nudt.edu.cn.
