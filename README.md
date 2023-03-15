@@ -214,15 +214,15 @@ Take the dataset **DBP15K (ZH-EN)** as an example, the folder ```data/zh_en``` c
 * triples_2: relation triples encoded by ids in target KG (EN);
 
 ### Non 1-to-1 Alignment Dataset
-We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as **mul**), which adopts the same format.
+We also offer our constructed non 1-to-1 alignment dataset FB_DBP_MUL (shortened as **mul**) , which adopts the same format.
 
 ### Dataset Usage
-Unzip the ```data.zip```. For the usage of auxiliary information, obtain the [name embeddings] and [structural embeddings] files and place them under corresponding dataset directories.
+Unzip the ```data.zip```. For the usage of auxiliary information, obtain the name embeddings(Unzip the ```name.zip```) and [structural embeddings](https://1drv.ms/u/s!Ar-uYoG1mfiLkyRgwq_hCoLS_r33?e=BgRgRs) files and place them under corresponding dataset directories.
 
 For example, in the name embeddings, put ```name/zh_en/name_trans_vec_ftext.txt``` file in the ```name/zh_en``` folder into the ```data/zh_en``` folder.
 
 ## Experiments and Results
-To reproduce the experimental results in the paper, you can first download the unified [structural embeddings] and [the name embeddings]. 
+To reproduce the experimental results in the paper, you can first download the unified [structural embeddings](https://1drv.ms/u/s!Ar-uYoG1mfiLkyRgwq_hCoLS_r33?e=BgRgRs) and name embeddings(Unzip the ```name.zip```). 
 Then put the files under the corresponding directories. 
 ### Experiment Settings
 #### Hardware configuration and hyper-parameter setting
