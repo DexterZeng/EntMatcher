@@ -239,7 +239,7 @@ Since representation learning is not the focus of this work, we adopted two freq
 * **RREA** is one of the best-performing solutions, which leverages relational reflection transformation to obtain relation-specific entity embeddings.
 
 #### Auxiliary information for alignment
-Although EA underlines the use of graph structure for alignment([An experimental study of state-of-the-art entity alignment approaches,IEE TKDE 2020](https://ieeexplore.ieee.org/document/9174835)), for a more comprehensive evaluation, we examined the influence of auxiliary information on the matching results by following previous works and using entity name embeddings to facilitate alignment. We also combined these two channels of information with equal weights to generate the fused similarity matrix for matching.
+Although EA underlines the use of graph structure for alignment([An experimental study of state-of-the-art entity alignment approaches,IEEE TKDE 2020](https://ieeexplore.ieee.org/document/9174835)), for a more comprehensive evaluation, we examined the influence of auxiliary information on the matching results by following previous works and using entity name embeddings to facilitate alignment. We also combined these two channels of information with equal weights to generate the fused similarity matrix for matching.
 
 #### Similarity metric
 After obtaining the unified entity representations E, a similarity metric is required to produce pairwise scores and generate the similarity matrix S. Frequent choices include the cosine similarity, the Euclidean distance and the Manhattan distance.In this work, we followed mainstream works and adopted the cosine similarity.
