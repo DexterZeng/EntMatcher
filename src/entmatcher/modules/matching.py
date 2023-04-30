@@ -187,7 +187,7 @@ def smat(aep_fuse, d, args):
             # write the results!!!
             # ouf.write(str(int(match[0])) + '\t' + str(int(match[1]) - gapp) + '\n')
         if args.mode == "unm":
-            precision = trueC * 1.0 / len(matches)
+            precision = trueC * 1.0 / 10500
         else:
             precision = trueC * 1.0 / 10500
         recall = trueC * 1.0 / 10500
@@ -606,7 +606,7 @@ def ceaff_rl(aep_fuse, d, args):
         f1 = 2 / (1 / precision + 1 / recall)
         print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
     elif args.mode == "unm":
-        precision = trueC * 1.0 / 10500
+        precision = trueC * 1.0 / len(ids)
         recall = trueC * 1.0 / 10500
         f1 = 2 / (1 / precision + 1 / recall)
         print(str(precision) + "\t" + str(recall) + "\t" + str(f1))
