@@ -27,10 +27,10 @@ class Dataset:
 
         ## for unmatchable scenario!!!
         if args.mode == "unm":
-            self.e, self.KG1, self.KG2, self.train, self.test, self.test_lefts, self.test_rights, self.l2r, self.r2l, self.vali = \
+            self.e, self.r, self.KG1, self.KG2, self.train, self.test, self.test_lefts, self.test_rights, self.l2r, self.r2l, self.vali = \
                 self.prepare_input_unm()
         else:
-            self.e, self.KG1, self.KG2, self.train, self.test, self.test_lefts, self.test_rights, self.l2r, self.r2l, self.vali = \
+            self.e, self.r, self.KG1, self.KG2, self.train, self.test, self.test_lefts, self.test_rights, self.l2r, self.r2l, self.vali = \
                 self.prepare_input()
 
     def prepare_input(self):
@@ -62,8 +62,9 @@ class Dataset:
         train = np.array(train)
         KG1 = loadfile(self.kg1, 3)
         KG2 = loadfile(self.kg2, 3)
+        r = len(set([t1[1] for t1 in KG1]) | set([t2[1] for t2 in KG2]))
         vali = loadfile(self.val, 2)
-        return e, KG1, KG2, train, test, test_lefts, test_rights, l2r, r2l, vali
+        return e, r, KG1, KG2, train, test, test_lefts, test_rights, l2r, r2l, vali
 
     def prepare_input_unm(self):
         e = len(set(loadfile(self.e1, 1)) | set(loadfile(self.e2, 1)))
@@ -95,6 +96,7 @@ class Dataset:
         train = np.array(train)
         KG1 = loadfile(self.kg1, 3)
         KG2 = loadfile(self.kg2, 3)
+        r = len(set([t1[1] for t1 in KG1]) | set([t2[1] for t2 in KG2]))
         vali = loadfile(self.val, 2)
         # test_lefts also need to add the source entities!!!
         # add some entities into test_lefts!!!
@@ -104,7 +106,7 @@ class Dataset:
             if i >= 15000:
                 if int(strs[0]) not in test_lefts:
                     test_lefts.append(int(strs[0]))
-        return e, KG1, KG2, train, test, test_lefts, test_rights, l2r, r2l, vali
+        return e, r, KG1, KG2, train, test, test_lefts, test_rights, l2r, r2l, vali
 
     def loadNe(self):
         f1 = open(self.nepath)

@@ -1,4 +1,5 @@
 import entmatcher as em
+from entmatcher.modules import enhance
 import numpy as np
 import time
 import os
@@ -10,6 +11,7 @@ if __name__ == '__main__':
     parser.add_argument("--mode", type=str, default="1-to-1", help="mode")  # 1-to-1 mul unm
     parser.add_argument("--encoder", type=str, default="rrea", help="the type of encoder")
     parser.add_argument("--features", type=str, default="name", help="usage of features") # stru name struname
+    parser.add_argument("--enhance", type=str, default="none", required=False, help="enhancement method for representation") # tfp
     parser.add_argument("--data_dir", type=str, default="../data/zh_en", required=False, help="input dataset file directory")  # mul | zh_en | ja_en | fr_en en_fr_15k_V1 en_de_15k_V1 dbp_wd_15k_V1 dbp_yg_15k_V1 fb_dbp
 
     parser.add_argument("--algorithm", type=str, default="dinf", help="choice of algorithm")  # 1-to-1 mul unm
@@ -47,6 +49,9 @@ if __name__ == '__main__':
     else:
         print("FAlSE!!!")
 
+    if args.enhance == "tfp":
+        se_vec = enhance.gen(se_vec, d, "tfp")
+    
     if args.features == 'stru':
         a1.match([se_vec], d)
     if args.features == 'name' or args.features == 'struname':

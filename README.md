@@ -95,6 +95,7 @@ src/
 * Numpy
 * Scikit-learn
 * fml
+* faiss
 
 
 ### Installation

@@ -33,6 +33,7 @@ def get(se_vec, test_lefts, test_rights, metric):
 #     return aep
 
 def cos(se_vec, test_lefts, test_rights):
+    tf.compat.v1.disable_eager_execution()
     Lvec = tf.placeholder(tf.float32, [None, se_vec.shape[1]])
     Rvec = tf.placeholder(tf.float32, [None, se_vec.shape[1]])
     he = tf.nn.l2_normalize(Lvec, axis=-1)
